@@ -1,12 +1,12 @@
-from quart import Quart, jsonify, request
+from flask import Flask, jsonify
 from bs4 import BeautifulSoup
-import httpx
+import requests
 
-app = Quart(__name__)
+app = Flask(__name__)
 
 def get_gold_rates():
     url = 'https://www.urdupoint.com/business/gold-rates.html'
-    response = httpx.get(url)
+    response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     
     # Find the table containing gold rates
@@ -17,7 +17,7 @@ def get_gold_rates():
     data = []
     for row in rows[1:]:  # Skipping the header row
         cells = row.find_all('td')
-        if len(cells) == 3:  # Assuming each row has 3 cells containing data
+        if len(cells) == 3:  # A`1ssuming each row has 3 cells containing data
             purity = cells[0].text.strip()
             per_tola = cells[1].text.strip()
             per_10_gram = cells[2].text.strip()
@@ -32,22 +32,15 @@ def get_gold_rates():
     
     return data
 
-@app.route('/')
-async def index():
-    return 'Welcome to the Gold Rates API'
-
-@app.route('/api/gold-rates', methods=['GET'])
-async def gold_rates_api():
+@app.route('/gold-rates', methods=['GET'])
+def gold_rates_api():
     gold_rates_data = get_gold_rates()
     return jsonify(gold_rates_data)
 
-@app.route('/api/gold-rates/<int:index>', methods=['GET'])
-async def get_gold_rate(index):
-    gold_rates_data = get_gold_rates()
-    if index < len(gold_rates_data):
-        return jsonify(gold_rates_data[index])
-    else:
-        return jsonify({'error': 'Index out of range'})
+# Define a route for the root URL
+@app.route('/')
+def index():
+    return 'Welcome to the Gold Rates API'
 
 if __name__ == '__main__':
     app.run(debug=True)
