@@ -1,5 +1,3 @@
-# api/gold_rates.py
-
 from flask import Flask, jsonify
 from bs4 import BeautifulSoup
 import requests
@@ -34,7 +32,19 @@ def get_gold_rates():
     
     return data
 
-@app.route('/api/gold-rates', methods=['GET'])
+@app.route('/', methods=['GET'])
+def index():
+    return "Welcome to the Gold Rates API!"
+
+@app.route('/gold-rates', methods=['GET'])
 def gold_rates_api():
-    gold_rates_data = get_gold_rates()
-    return jsonify(gold_rates_data)
+    try:
+        gold_rates_data = get_gold_rates()
+        return jsonify(gold_rates_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+if __name__ == '__main__':
+    # Start the Flask application
+    print("Flask server starting...")
+    app.run(debug=True)
