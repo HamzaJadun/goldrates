@@ -1,8 +1,10 @@
-# gold_rates_api.py
+# wsgi.py
 
+from flask import Flask, jsonify
 from bs4 import BeautifulSoup
 import requests
-import json
+
+app = Flask(__name__)
 
 def get_gold_rates():
     url = 'https://www.urdupoint.com/business/gold-rates.html'
@@ -32,16 +34,9 @@ def get_gold_rates():
     
     return data
 
-def handler(req, res):
+def handler(req):
     if req.method == 'GET':
         gold_rates_data = get_gold_rates()
-        res.status(200).json(gold_rates_data)
+        return jsonify(gold_rates_data)
     else:
-        res.status(405).send('Method Not Allowed')
-
-# This part is optional but recommended
-def get(req, res):
-    handler(req, res)
-
-def post(req, res):
-    handler(req, res)
+        return 'Method Not Allowed', 405
