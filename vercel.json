@@ -1,21 +1,14 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "/index.py",
-      "use": "@vercel/python"
+  "functions": {
+    "api/gold-rates": {
+      "src": "wsgi.handler",
+      "runtime": "python3.8"
     }
-  ],
+  },
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/index.py",
-      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-      "headers": {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-type"
-      }
+      "src": "/gold-rates",
+      "dest": "api/gold-rates"
     }
   ]
 }
