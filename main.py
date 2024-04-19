@@ -1,13 +1,12 @@
-from quart import Quart, jsonify
+from quart import Quart, jsonify, request
 from bs4 import BeautifulSoup
 import httpx
 
 app = Quart(__name__)
 
-async def get_gold_rates():
+def get_gold_rates():
     url = 'https://www.urdupoint.com/business/gold-rates.html'
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
+    response = httpx.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     
     # Find the table containing gold rates
@@ -33,14 +32,22 @@ async def get_gold_rates():
     
     return data
 
-@app.route('/api/gold-rates', methods=['GET'])
-async def gold_rates_api():
-    gold_rates_data = await get_gold_rates()
-    return jsonify(gold_rates_data)
-
 @app.route('/')
 async def index():
     return 'Welcome to the Gold Rates API'
+
+@app.route('/api/gold-rates', methods=['GET'])
+async def gold_rates_api():
+    gold_rates_data = get_gold_rates()
+    return jsonify(gold_rates_data)
+
+@app.route('/api/gold-rates/<int:index>', methods=['GET'])
+async def get_gold_rate(index):
+    gold_rates_data = get_gold_rates()
+    if index < len(gold_rates_data):
+        return jsonify(gold_rates_data[index])
+    else:
+        return jsonify({'error': 'Index out of range'})
 
 if __name__ == '__main__':
     app.run(debug=True)
