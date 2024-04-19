@@ -1,14 +1,7 @@
 {
   "functions": {
-    "api/gold-rates": {
-      "src": "wsgi.handler",
+    "api/gold_rates": {
       "runtime": "python3.8"
     }
-  },
-  "routes": [
-    {
-      "src": "/gold-rates",
-      "dest": "api/gold-rates"
-    }
-  ]
+  }
 }
